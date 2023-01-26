@@ -25,7 +25,7 @@ jobs:
         name: Build application
         uses: docker/build-push-action@v3
         with:
-          context: ./app
+          context: .
           file: ./app/Dockerfile
           push: true
           tags: rapour/playful-app
@@ -33,7 +33,7 @@ jobs:
         name: Build particle
         uses: docker/build-push-action@v3
         with:
-          context: ./particle
+          context: .
           file: ./particle/Dockerfile
           push: true
           tags: rapour/playful-particles
