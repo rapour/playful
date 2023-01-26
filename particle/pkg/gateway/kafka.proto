@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package kafka;
+
+option go_package = "./kafka";
+
+
+message Location {
+    int32 id = 1;
+    int32 longitude = 2;
+    int32 altitude = 3;
+    int32 timestamp = 4;
+}
