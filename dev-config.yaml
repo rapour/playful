@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+data:
+  kafka_bootstrap_server: kafka-cluster-kafka-bootstrap.kafka:9092
+  kafka_location_topic: location

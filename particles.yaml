@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: particles-deployment
+  labels:
+    app: particle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: particle
+  template:
+    metadata:
+      labels:
+        app: particle
+    spec:
+      containers:
+      - name: particle
+        image: rapour/playful-particles:latest
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: kafka_bootstrap_server
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: kafka_location_topic

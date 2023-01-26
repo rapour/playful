@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: rapour/playful-app:latest
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: kafka_bootstrap_server
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: kafka_location_topic

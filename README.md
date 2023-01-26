@@ -28,5 +28,19 @@ kubectl get pods -n kafka -w
 
 When the output of the first commands indicates `READY` is `TRUE`, proceed with making a kafka topic:
 ```bash
+kubectl create -f ./kafka-topic.yaml -n kafka
+```
 
+Now let's deploy our components. Create another namespace named `dev`:
+```bash
+kubectl create namespace dev
+```
+Create a config map in that namespace to hold the information that is needed to connect components:
+```bash
+kubectl apply -f .\dev-config.yaml -n dev
+```
+Deploy the `particle` and `app` components on k8s:
+```bash
+kubectl apply -f .\particles.yaml -n dev
+kubectl apply -f .\app.yaml -n dev
 ```
