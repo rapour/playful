@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       -
@@ -25,7 +28,7 @@ jobs:
         name: Build application
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./app
           file: ./app/Dockerfile
           push: true
           tags: rapour/playful-app
@@ -33,7 +36,7 @@ jobs:
         name: Build particle
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./particle
           file: ./particle/Dockerfile
           push: true
           tags: rapour/playful-particles
