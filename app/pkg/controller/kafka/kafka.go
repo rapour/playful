@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"playful/app/pkg/controller"
+	"playful/app/pkg/domain"
+	"playful/app/pkg/service"
 	"playful/app/tools/kafka"
 
 	"github.com/rs/zerolog/log"
@@ -13,6 +15,7 @@ import (
 
 type kafkaController struct {
 	config       kafka.Config
+	service      service.PlayfulService
 	errChan      chan error
 	innerErrChan chan error
 }
@@ -47,7 +50,6 @@ func (k *kafkaController) Worker() {
 			k.innerErrChan <- err
 			return
 		}
-		log.Info().Msgf("message received at topic/partition/offset %v/%v/%v: %s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
 
 		var message Location
 		err = proto.Unmarshal(m.Value, &message)
@@ -55,8 +57,18 @@ func (k *kafkaController) Worker() {
 			k.innerErrChan <- err
 			return
 		}
+		log.Info().Msgf("message received at topic/partition/offset %v/%v/%v: %s = %v\n", m.Topic, m.Partition, m.Offset, string(m.Key), &message)
 
 		// process the message
+		err = k.service.SetLocation(context.TODO(), domain.Location{
+			Altitude:  message.Altitude,
+			Longitude: message.Longitude,
+			Timestamp: message.Timestamp,
+		})
+		if err != nil {
+			k.innerErrChan <- err
+			return
+		}
 
 		// err = reader.CommitMessages(context.TODO(), m)
 		// if err != nil {
@@ -86,10 +98,11 @@ func (k *kafkaController) Manager() chan error {
 	return k.errChan
 }
 
-func NewKafkaController(c kafka.Config) controller.KafkaController {
+func NewKafkaController(c kafka.Config, s service.PlayfulService) controller.KafkaController {
 
 	return &kafkaController{
 		config:  c,
+		service: s,
 		errChan: make(chan error),
 	}
 }

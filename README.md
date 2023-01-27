@@ -44,3 +44,10 @@ Deploy the `particle` and `app` components on k8s:
 kubectl apply -f .\particles.yaml -n dev
 kubectl apply -f .\app.yaml -n dev
 ```
+
+Now let's create a cluster of [Cassandra](https://cassandra.apache.org/_/index.html) nodes as our data persistence medium using k8s statefulset:
+```bash
+kubectl apply -f .\cassandra.yml
+```
+
+Note that we maintain the Cassandra service within the default namespace of k8s. 
