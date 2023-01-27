@@ -22,6 +22,8 @@ type kafkaController struct {
 
 func (k *kafkaController) Worker() {
 
+	log.Info().Msg("Worker started")
+
 	defer func() {
 
 		if r := recover(); r != nil {
@@ -81,7 +83,7 @@ func (k *kafkaController) Worker() {
 
 func (k *kafkaController) Manager() chan error {
 
-	WorkerNumber := 1
+	WorkerNumber := 4
 	go func() {
 
 		for i := 0; i < WorkerNumber; i++ {
@@ -90,7 +92,7 @@ func (k *kafkaController) Manager() chan error {
 
 		// communicate inner channel to the exposed error channel if necessary
 		for err := range k.innerErrChan {
-			log.Error().Msgf("error in kafka worker: %s", err)
+			log.Error().Msgf("error in kafka worker: %v", err)
 		}
 
 	}()
