@@ -31,22 +31,33 @@ func (p *playfulService) SetLocation(ctx context.Context, loc domain.Location) e
 
 }
 
-func (p *playfulService) GetLoaction(ctx context.Context) (domain.Location, error) {
-	
-	num, scanner := p.column.Get(ctx, "SELECT altitude, longitude, time FROM locations LIMIT 1")
+func (p *playfulService) GetLoaction(ctx context.Context) ([]domain.Location, error) {
+
+	num, scanner := p.column.Get(ctx, "SELECT id, altitude, longitude, time FROM locations LIMIT 1")
 
 	var time time.Time
 	var result domain.Location
-	if scanner.Next() {
-		err := scanner.Scan(&result.Altitude, &result.Longitude, &time)
+	var resultSet []domain.Location
+	for scanner.Next() {
+		err := scanner.Scan(&result.Ident, &result.Altitude, &result.Longitude, &time)
 		result.Timestamp = int32(time.Unix())
 
-		if err != nil {
-			return result, fmt.Errorf("[GetLocation][rows: %d]: %v", num, err)
+		if result.Altitude == 0 && result.Longitude == 0 {
+			result.Visible = false
+		} else {
+			result.Visible = true
 		}
-		return result, nil
+
+		if err != nil {
+			return nil, fmt.Errorf("[GetLocation][rows: %d]: %v", num, err)
+		}
+		resultSet = append(resultSet, result)
 	}
-	return domain.Location{}, fmt.Errorf("[GetLocation][rows: %d]: %v", num, scanner.Err())
+	if len(resultSet) == 0 {
+		return nil, fmt.Errorf("[GetLocation][rows: %d]: %v", num, scanner.Err())
+	}
+
+	return resultSet, nil
 }
 
 func NewPlayfulService(rep repository.ColumnRepository) (service.PlayfulService, error) {

@@ -19,14 +19,13 @@ func (c *Client) Close() {
 func NewCassandraClient(c Config) (*Client, error) {
 
 	cluster := gocql.NewCluster(c.Address)
+	cluster.Timeout = 2 * time.Second
+
 	initialSession, err := cluster.CreateSession()
 	if err != nil {
 		return nil, err
 	}
 	defer initialSession.Close()
-
-	// TODO
-	time.Sleep(5 * time.Second)
 
 	// dev
 	err = initialSession.Query(fmt.Sprintf("DROP KEYSPACE IF EXISTS %s", c.Keyspace)).Exec()

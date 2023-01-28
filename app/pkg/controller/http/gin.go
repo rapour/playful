@@ -56,6 +56,7 @@ func (c *httpController) Manager() chan error {
 				log.Printf("failed to get location: %v", err)
 				continue
 			}
+
 			sl, err := json.Marshal(&l)
 			if err != nil {
 				log.Printf("failed to marshalize location: %v", err)

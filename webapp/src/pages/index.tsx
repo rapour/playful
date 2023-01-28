@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import {motion} from 'framer-motion'
 import Head from "next/head";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const colors = ["green", "white", "red"]
+
+const getColor = (id: any) => colors[id % 3]
+
 export default function Home() {
-  const [top, setTop] = useState(100);
-  const [left, setLeft] = useState(100);
-  
+  const [nodes, setNodes] = useState([]);
 
   useEffect(() => {
     let eventSource = new EventSource(`/api/loc`);
@@ -18,9 +19,18 @@ export default function Home() {
     };
 
     eventSource.onmessage = (e) => {
-      const location = JSON.parse(e.data);
-      setTop(location.Altitude)
-      setLeft(location.Longitude)
+      const locations = JSON.parse(e.data);
+      let ns = locations.map((e: any) => {
+        let n: any = nodes.find((a: any) => a.id === e.id)
+        if (e.visible || n == undefined) {
+          return {id: e.id, top: e.alt, left: e.lon, visible: e.visible}
+        } else {
+          n.visible = false
+          return n
+        }
+      })
+      
+      setNodes(ns);
     };
 
     eventSource.onerror = (e) => {
@@ -47,12 +57,18 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={styles.field}>
-        <motion.div
-        className={styles.dot}
-            animate={{ top: top, left: left }}
-            transition={{ delay: 0.015 }}
-          />
-          {/* <div className={styles.dot} style={{ top: top, left: left }} /> */}
+          {nodes.map((elm: any) => (
+            <div
+              key={elm.id}
+              className={styles.dot}
+              style={{
+                top: elm.top,
+                left: elm.left,
+                display: elm.visible ? "block" : "none",
+                backgroundColor: getColor(elm.id)
+              }}
+            />
+          ))}
         </div>
       </main>
     </>

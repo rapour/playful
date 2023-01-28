@@ -1,8 +1,9 @@
 package domain
 
 type Location struct {
-	Ident     int32
-	Longitude int32
-	Altitude  int32
-	Timestamp int32
+	Ident     int32 `json:"id"`
+	Longitude int32 `json:"lon"`
+	Altitude  int32 `json:"alt"`
+	Timestamp int32 `json:"timestamp"`
+	Visible   bool  `json:"visible,omitempty"`
 }

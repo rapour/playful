@@ -7,5 +7,5 @@ import (
 
 type PlayfulService interface {
 	SetLocation(ctx context.Context, loc domain.Location) error
-	GetLoaction(ctx context.Context) (domain.Location, error)
+	GetLoaction(ctx context.Context) ([]domain.Location, error)
 }

@@ -31,13 +31,22 @@ func main() {
 	var vy float64 = 4
 	var xx float64 = float64(rand.Intn(100))
 	var yy float64 = float64(rand.Intn(100))
-	var inertia float64 = 0.5
+	hiddenCount := 0
+	var inertia float64 = 0.2
 	for {
 
-		loc := domain.Location{
-			Longitude: int32(xx),
-			Altitude:  int32(yy),
-			Timestamp: int32(time.Now().Unix()),
+		loc := domain.Location{Timestamp: int32(time.Now().Unix())}
+
+		if hiddenCount == 0 {
+			loc.Altitude = int32(yy)
+			loc.Longitude = int32(xx)
+
+			coin := rand.Intn(100)
+			if coin > 95 {
+				hiddenCount = 5
+			}
+		} else {
+			hiddenCount--
 		}
 
 		err := kafkaClient.SendLocarion(context.TODO(), loc)
@@ -64,11 +73,11 @@ func main() {
 		vx = vx + vy*rand.NormFloat64()*inertia
 		vy = vy + vx*rand.NormFloat64()*inertia
 
-		if vx > 100 {
-			vx = 100
+		if math.Abs(vx) > 5 {
+			vx = 5 * (vx / math.Abs(vx))
 		}
-		if vy > 100 {
-			vy = 100
+		if math.Abs(vy) > 5 {
+			vy = 5 * (vy / math.Abs(vy))
 		}
 
 	}
