@@ -7,6 +7,21 @@
   min-height: 100vh;
 }
 
+.field {
+  height: 200px;
+  width: 200px;
+  background-color: #000000;
+  position: relative;
+}
+
+.dot {
+  height: 5px;
+  width: 5px;
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 100px;
+}
+
 .description {
   display: inherit;
   justify-content: inherit;

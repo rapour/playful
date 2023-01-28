@@ -2,28 +2,24 @@ package main
 
 import (
 	"context"
+	"log"
 	"math/rand"
-	"os"
 	"time"
 
 	"playful/particles/pkg/domain"
 	gateway "playful/particles/pkg/gateway/kafka"
 	"playful/particles/tools/kafka"
-
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 func main() {
 
 	rand.Seed(time.Now().Unix())
 
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	log.Info().Msg("Particle is starting to play")
+	log.Printf("Particle is starting to play")
 
 	kafkaConfig, err := kafka.NewKafkaConfigFromENV("")
 	if err != nil {
-		log.Panic().Msgf("error obtaining kafka config: %v", err)
+		log.Panicf("error obtaining kafka config: %v", err)
 	}
 
 	kafkaClient := gateway.NewKafkaClient(kafkaConfig)
@@ -40,5 +36,5 @@ func main() {
 		time.Sleep(time.Second)
 	}
 
-	log.Info().Msg("Particle is dying")
+	log.Printf("Particle is dying")
 }

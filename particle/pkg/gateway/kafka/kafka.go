@@ -30,7 +30,7 @@ func (k *kafkaClient) Shutdown() error {
 func (k *kafkaClient) SendLocarion(ctx context.Context, l domain.Location) error {
 
 	loc := Location{
-		Id:        0,
+		Id:        1,
 		Longitude: l.Longitude,
 		Altitude:  l.Altitude,
 		Timestamp: l.Timestamp,

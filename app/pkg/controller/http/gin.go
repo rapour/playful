@@ -1,20 +1,24 @@
 package http
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"time"
 
 	"playful/app/pkg/controller"
+	"playful/app/pkg/service"
 	"playful/app/tools/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 type httpController struct {
-	config http.Config
-	router *gin.Engine
+	config  http.Config
+	router  *gin.Engine
+	service service.PlayfulService
 }
 
 // It keeps a list of clients those are currently attached
@@ -42,15 +46,24 @@ func (c *httpController) Manager() chan error {
 	// Initialize new streaming server
 	stream := NewServer()
 
-	// We are streaming current time to clients in the interval 10 seconds
+	// We are streaming data to clients in the interval 1 seconds
 	go func() {
 		for {
-			time.Sleep(time.Second * 10)
-			now := time.Now().Format("2006-01-02 15:04:05")
-			currentTime := fmt.Sprintf("The Current Time Is %v", now)
+			time.Sleep(time.Second * 1)
 
-			// Send current time to clients message channel
-			stream.Message <- currentTime
+			l, err := c.service.GetLoaction(context.TODO())
+			if err != nil {
+				log.Printf("failed to get location: %v", err)
+				continue
+			}
+			sl, err := json.Marshal(&l)
+			if err != nil {
+				log.Printf("failed to marshalize location: %v", err)
+				continue
+			}
+
+			// Send to clients message channel
+			stream.Message <- string(sl)
 		}
 	}()
 
@@ -104,13 +117,13 @@ func (stream *Event) listen() {
 		// Add new available client
 		case client := <-stream.NewClients:
 			stream.TotalClients[client] = true
-			log.Info().Msgf("Client added. %d registered clients", len(stream.TotalClients))
+			log.Printf("Client added. %d registered clients", len(stream.TotalClients))
 
 		// Remove closed client
 		case client := <-stream.ClosedClients:
 			delete(stream.TotalClients, client)
 			close(client)
-			log.Info().Msgf("Removed client. %d registered clients", len(stream.TotalClients))
+			log.Printf("Removed client. %d registered clients", len(stream.TotalClients))
 
 		// Broadcast message to client
 		case eventMsg := <-stream.Message:
@@ -164,13 +177,14 @@ func HeadersMiddleware() gin.HandlerFunc {
 	}
 }
 
-func NewHttpController(c http.Config) controller.HttpController {
+func NewHttpController(c http.Config, s service.PlayfulService) controller.HttpController {
 
 	r := gin.Default()
 	r.Use(corsMiddleware)
 
 	return &httpController{
-		config: c,
-		router: r,
+		config:  c,
+		service: s,
+		router:  r,
 	}
 }

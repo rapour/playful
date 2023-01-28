@@ -2,6 +2,7 @@ package cassandra
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gocql/gocql"
 )
@@ -24,6 +25,15 @@ func NewCassandraClient(c Config) (*Client, error) {
 	}
 	defer initialSession.Close()
 
+	// TODO
+	time.Sleep(5 * time.Second)
+
+	// dev
+	err = initialSession.Query(fmt.Sprintf("DROP KEYSPACE IF EXISTS %s", c.Keyspace)).Exec()
+	if err != nil {
+		return nil, err
+	}
+
 	createNamespace := initialSession.Query(fmt.Sprintf(`CREATE KEYSPACE IF NOT EXISTS %s
     WITH replication = {
         'class' : 'SimpleStrategy',
@@ -36,6 +46,8 @@ func NewCassandraClient(c Config) (*Client, error) {
 	}
 
 	cluster.Keyspace = c.Keyspace
+	cluster.Consistency = gocql.Quorum
+
 	session, err := cluster.CreateSession()
 	if err != nil {
 		return nil, fmt.Errorf("main session creation failed: %v", err)

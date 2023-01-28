@@ -2,8 +2,11 @@ package repository
 
 import (
 	"context"
+
+	"github.com/gocql/gocql"
 )
 
 type ColumnRepository interface {
-	Query(ctx context.Context, q string, values ...interface{}) error
+	Get(ctx context.Context, q string, values ...interface{}) (int, gocql.Scanner)
+	Set(ctx context.Context, q string, values ...interface{}) error
 }
