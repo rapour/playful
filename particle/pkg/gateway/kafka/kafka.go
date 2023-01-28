@@ -2,11 +2,12 @@ package kafka
 
 import (
 	"context"
+	"log"
+	"time"
 
 	"playful/particles/pkg/domain"
 	"playful/particles/tools/kafka"
 
-	"github.com/rs/zerolog/log"
 	kafka_go "github.com/segmentio/kafka-go"
 	"google.golang.org/protobuf/proto"
 )
@@ -62,10 +63,11 @@ func NewKafkaClient(c kafka.Config) KafkaClient {
 		Addr:                   kafka_go.TCP(c.BootstrapServer),
 		Topic:                  c.Topic,
 		AllowAutoTopicCreation: true,
-		Logger:                 kafka_go.LoggerFunc(log.Debug().Msgf),
-		ErrorLogger:            kafka_go.LoggerFunc(log.Error().Msgf),
-		Balancer:               &kafka_go.LeastBytes{},
-		Transport:              sharedTransport,
+		BatchTimeout:           15 * time.Millisecond,
+		//Logger:                 kafka_go.LoggerFunc(log.Printf),
+		ErrorLogger: kafka_go.LoggerFunc(log.Printf),
+		Balancer:    &kafka_go.LeastBytes{},
+		Transport:   sharedTransport,
 	}
 
 	return &kafkaClient{

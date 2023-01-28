@@ -49,7 +49,7 @@ func (c *httpController) Manager() chan error {
 	// We are streaming data to clients in the interval 1 seconds
 	go func() {
 		for {
-			time.Sleep(time.Second * 1)
+			time.Sleep(time.Millisecond * 15)
 
 			l, err := c.service.GetLoaction(context.TODO())
 			if err != nil {

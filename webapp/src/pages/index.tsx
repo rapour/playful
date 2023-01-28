@@ -19,8 +19,8 @@ export default function Home() {
 
     eventSource.onmessage = (e) => {
       const location = JSON.parse(e.data);
-      setTop(2 * location.Altitude)
-      setLeft(2 * location.Longitude)
+      setTop(location.Altitude)
+      setLeft(location.Longitude)
     };
 
     eventSource.onerror = (e) => {
@@ -50,7 +50,7 @@ export default function Home() {
         <motion.div
         className={styles.dot}
             animate={{ top: top, left: left }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.015 }}
           />
           {/* <div className={styles.dot} style={{ top: top, left: left }} /> */}
         </div>

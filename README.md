@@ -18,7 +18,11 @@ We have named our new namespace `kafka`. Now, we apply Strimzi install files on 
 kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 ```
 
-More details can be found [here](https://strimzi.io/quickstarts/). Note that the kafka namespace we have created and the `namespace` query parameter inside the installation url of Strimzi must match. 
+More details can be found [here](https://strimzi.io/quickstarts/). Note that the kafka namespace we have created and the `namespace` query parameter inside the installation url of Strimzi must match. And then create a kafka cluster using:
+
+```bash
+kubectl apply -f .\kafka.yaml -n kafka
+```
 
 Check for the status of the cluster you are creating with one of the below commands:
 ```bash
