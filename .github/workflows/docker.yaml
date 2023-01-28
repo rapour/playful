@@ -33,6 +33,14 @@ jobs:
           push: true
           tags: rapour/playful-app
       -
+        name: Build webapp
+        uses: docker/build-push-action@v3
+        with:
+          context: ./webapp
+          file: ./webapp/Dockerfile
+          push: true
+          tags: rapour/playful-webapp
+      -
         name: Build particle
         uses: docker/build-push-action@v3
         with:

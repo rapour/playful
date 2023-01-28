@@ -5,3 +5,7 @@ metadata:
 data:
   kafka_bootstrap_server: kafka-cluster-kafka-bootstrap.kafka:9092
   kafka_location_topic: location
+  app_api_host: app-service.dev:80
+  cassandra_listen_address: cassandra.default:9042
+  cassandra_keyspace: "playful"
+  cassandra_replication_factor: 3

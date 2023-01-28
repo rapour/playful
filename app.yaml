@@ -28,3 +28,32 @@ spec:
             configMapKeyRef:
               name: dev-config
               key: kafka_location_topic
+        - name: CASSANDRA_LISTEN_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: cassandra_listen_address
+        - name: CASSANDRA_KEYSPACE
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: cassandra_keyspace
+        - name: CASSANDRA_REPLICATION_FACTOR
+          valueFrom:
+            configMapKeyRef:
+              name: dev-config
+              key: cassandra_replication_factor
+        - name: HTTP_SERVER_PORT
+          value: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+spec:
+  selector:
+    app: app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
