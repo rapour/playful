@@ -1,3 +1,14 @@
+# Playful Particles 👻
+
+This small project is a distributed pipeline intended to be used as a testbed for applications of Hidden Markov Models(HMM) in data analytics. Let's suppose you have a bunch of `particles`, walking randomly in steps on a two-dimensional box i.e. a bounded plane. Particles send their coordinates on the plane to an `app` whenever they move one step further. Unfortunately, the `app` receives these coordinates through a noisy channel and therefore its reads are not accurate. The goal is to estimate the actual coordinates of particles through the noisy data using a mathematical framework called Hidden Markov Model.  
+
+The implementation includes a couple of `particle` components sending their coordinates to a topic on a Kafka cluster. The `app` component consumes these events (noisy coordinates) and persists them on a Cassandra cluster. An `estimator` component uses the data to learn the transition and emission matrices of an HMM to be used to decode the future noisy coordinates and obtain the actual placement of particles. A `webapp` component is also introduced to visualize both the noisy and estimated locations of each particle. 
+
+All components are managed over Kubernetes to facilitate the deployment process. Individual images are accessible [here](https://hub.docker.com/u/rapour).
+
+## What is an HMM?
+
+To be completed...
 
 
 ## Installation
@@ -55,3 +66,9 @@ kubectl apply -f .\cassandra.yml
 ```
 
 Note that we maintain the Cassandra service within the default namespace of k8s. 
+
+To be completed...
+
+## How to use this testbed?
+
+To be completed...
