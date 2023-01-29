@@ -19,7 +19,7 @@ func (c *Client) Close() {
 func NewCassandraClient(c Config) (*Client, error) {
 
 	cluster := gocql.NewCluster(c.Address)
-	cluster.Timeout = 2 * time.Second
+	cluster.Timeout = 3 * time.Second
 
 	initialSession, err := cluster.CreateSession()
 	if err != nil {
@@ -28,10 +28,10 @@ func NewCassandraClient(c Config) (*Client, error) {
 	defer initialSession.Close()
 
 	// dev
-	err = initialSession.Query(fmt.Sprintf("DROP KEYSPACE IF EXISTS %s", c.Keyspace)).Exec()
-	if err != nil {
-		return nil, err
-	}
+	// err = initialSession.Query(fmt.Sprintf("DROP KEYSPACE IF EXISTS %s", c.Keyspace)).Exec()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	createNamespace := initialSession.Query(fmt.Sprintf(`CREATE KEYSPACE IF NOT EXISTS %s
     WITH replication = {

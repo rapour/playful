@@ -42,12 +42,6 @@ func (p *playfulService) GetLoaction(ctx context.Context) ([]domain.Location, er
 		err := scanner.Scan(&result.Ident, &result.Altitude, &result.Longitude, &time)
 		result.Timestamp = int32(time.Unix())
 
-		if result.Altitude == 0 && result.Longitude == 0 {
-			result.Visible = false
-		} else {
-			result.Visible = true
-		}
-
 		if err != nil {
 			return nil, fmt.Errorf("[GetLocation][rows: %d]: %v", num, err)
 		}

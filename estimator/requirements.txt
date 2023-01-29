@@ -1,0 +1,4 @@
+numpy
+hmmlearn
+cassandra-driver
+pydantic

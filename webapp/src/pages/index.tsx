@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {motion} from 'framer-motion'
 import Head from "next/head";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
@@ -20,16 +21,7 @@ export default function Home() {
 
     eventSource.onmessage = (e) => {
       const locations = JSON.parse(e.data);
-      let ns = locations.map((e: any) => {
-        let n: any = nodes.find((a: any) => a.id === e.id)
-        if (e.visible || n == undefined) {
-          return {id: e.id, top: e.alt, left: e.lon, visible: e.visible}
-        } else {
-          n.visible = false
-          return n
-        }
-      })
-      
+      let ns = locations.map((e: any) => ({id: e.id, top: e.alt, left: e.lon}))
       setNodes(ns);
     };
 
@@ -58,13 +50,12 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.field}>
           {nodes.map((elm: any) => (
-            <div
+            <motion.div
               key={elm.id}
               className={styles.dot}
-              style={{
+              animate={{
                 top: elm.top,
                 left: elm.left,
-                display: elm.visible ? "block" : "none",
                 backgroundColor: getColor(elm.id)
               }}
             />
